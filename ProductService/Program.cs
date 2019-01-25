@@ -9,7 +9,7 @@ namespace ProductService
         static void Main(string[] args)
         {
 			var products = new List<Product> { new Product() { ID = 1, Barcode = "CoolChair" }, new Product() { ID = 2, Barcode = "CoolJacket" } };
-			// raise branch created message
+
 			var bus = Bus.Factory.CreateUsingRabbitMq(sbc => {
 				var host = sbc.Host(new Uri("rabbitmq://mwapp-dev:5672/test"), h => {
 					h.Username("admin");
@@ -17,7 +17,7 @@ namespace ProductService
 				});
 			});
 
-			bus.Start(); // This is important!
+			bus.Start(); 
 
 			foreach (var product in products) {
 				bus.Publish(new ProductCreated { ProductID = product.ID });
@@ -26,17 +26,16 @@ namespace ProductService
 		}
     }
 
-	public interface IProductCreated {
-		int ProductID { get; }
+	public class Product {
+		public int ID { get; set; }
+		public string Barcode { get; set; }
 	}
 
 	public class ProductCreated : IProductCreated {
 		public int ProductID { get; set; }
 	}
 
-
-	public class Product {
-		public int ID { get; set; }
-		public string Barcode { get; set; }
+	public interface IProductCreated {
+		int ProductID { get; }
 	}
 }

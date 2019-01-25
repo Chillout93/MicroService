@@ -80,16 +80,27 @@ namespace AllocationService
 		public string Code { get; set; }
 	}
 
+	public class Branch {
+		public int ID { get; set; }
+		public int WarehouseID { get; set; }
+	}
+
+	public class Product {
+		public int ID { get; set; }
+		public string Barcode { get; set; }
+	}
+
+	public class ProductWarehouse {
+		public int ProductID { get; set; }
+		public int WarehouseID { get; set; }
+		public int SoftQuantity { get; set; }
+		public int HardQuantity { get; set; }
+	}
+
 	public class AllocationCreated : IAllocationCreated {
 		public int WarhouseID { get; set; }
 		public int BranchID { get; set; }
 		public int ProductID { get; set; }
-	}
-
-	public interface IAllocationCreated {
-		int WarhouseID { get; }
-		int BranchID { get; }
-		int ProductID { get;  }
 	}
 
 	public class WarehouseStockUpdated : IWarehouseStockUpdated {
@@ -98,6 +109,12 @@ namespace AllocationService
 		public int ProductID { get; set; }
 
 		public int Quantity { get; set; }
+	}
+
+	public interface IAllocationCreated {
+		int WarhouseID { get; }
+		int BranchID { get; }
+		int ProductID { get;  }
 	}
 
 	public interface IWarehouseStockUpdated {
@@ -116,30 +133,12 @@ namespace AllocationService
 		int WarehouseID { get; }
 	}
 
-	public class Product {
-		public int ID { get; set; }
-		public string Barcode { get; set; }
-	}
-
 	public interface IProductCreated {
 		int ProductID { get; }
-	}
-
-
-	public class Branch {
-		public int ID { get; set; }
-		public int WarehouseID { get; set; }
 	}
 
 	public interface IBranchCreated {
 		int BranchID { get; }
 		int WarehouseID { get; }
-	}
-
-	public class ProductWarehouse {
-		public int ProductID { get; set; }
-		public int WarehouseID { get; set; }
-		public int SoftQuantity { get; set; }
-		public int HardQuantity { get; set; }
 	}
 }

@@ -50,11 +50,11 @@ namespace InventoryService
 				sbc.ReceiveEndpoint(host, "InventoryService_IWarehouseCreated", ep =>
 				{
 					ep.Handler<IWarehouseCreated>(context => {
-					Console.WriteLine($"Received warehouse: {JsonConvert.SerializeObject(context.Message)}");
-					warehouses.Add(new Warehouse() { ID = context.Message.WarehouseID });
+						Console.WriteLine($"Received warehouse: {JsonConvert.SerializeObject(context.Message)}");
+						warehouses.Add(new Warehouse() { ID = context.Message.WarehouseID });
 
-					return Task.CompletedTask;
-				});
+						return Task.CompletedTask;
+					});
 				});
 
 				sbc.ReceiveEndpoint(host, "InventoryService_IAllocationCreated", ep => {
@@ -67,16 +67,16 @@ namespace InventoryService
 							branchWarehouse.SoftQuantity += 1;
 						}
 
-						bus.Publish(new WarehouseStockUpdated() { ProductID = productWarehouse.ProductID, WarehouseID = productWarehouse.WarehouseID, Quantity = productWarehouse.SoftQuantity });
-						bus.Publish(new BranchStockUpdated() { ProductID = branchWarehouse.ProductID, BranchID = branchWarehouse.BranchID, Quantity = branchWarehouse.SoftQuantity });
+						//bus.Publish(new WarehouseStockUpdated() { ProductID = productWarehouse.ProductID, WarehouseID = productWarehouse.WarehouseID, Quantity = productWarehouse.SoftQuantity });
+						//bus.Publish(new BranchStockUpdated() { ProductID = branchWarehouse.ProductID, BranchID = branchWarehouse.BranchID, Quantity = branchWarehouse.SoftQuantity });
 
 						return Task.CompletedTask;
 					});
 				});
 
 				sbc.ReceiveEndpoint(host, "InventoryService_IWarehouseStockCounted", ep =>
-							{
-								ep.Handler<IWarehouseStockCounted>(context => {
+				{
+					ep.Handler<IWarehouseStockCounted>(context => {
 						Console.WriteLine($"Received warehouse count: {JsonConvert.SerializeObject(context.Message)}");
 						var productWarhouse = productWarehouses.FirstOrDefault(x => x.WarehouseID == context.Message.WarehouseID && x.ProductID == context.Message.ProductID);
 						if (productWarhouse != null) productWarehouses.Remove(productWarhouse);
@@ -84,14 +84,14 @@ namespace InventoryService
 						productWarhouse = new ProductWarehouse() { WarehouseID = context.Message.WarehouseID, ProductID = context.Message.ProductID, SoftQuantity = context.Message.Quantity };
 						productWarehouses.Add(productWarhouse);
 
-						bus.Publish(new WarehouseStockUpdated() { WarehouseID = productWarhouse.WarehouseID, ProductID = productWarhouse.ProductID, Quantity = productWarhouse.SoftQuantity });
+						//bus.Publish(new WarehouseStockUpdated() { WarehouseID = productWarhouse.WarehouseID, ProductID = productWarhouse.ProductID, Quantity = productWarhouse.SoftQuantity });
 						return Task.CompletedTask;
 					});
 				});
 
 				sbc.ReceiveEndpoint(host, "InventoryService_IBranchStockCounted ", ep =>
-								{
-									ep.Handler<IBranchStockCounted>(context => {
+				{
+					ep.Handler<IBranchStockCounted>(context => {
 						Console.WriteLine($"Received warehouse count: {JsonConvert.SerializeObject(context.Message)}");
 						var productBranch = productBranches.FirstOrDefault(x => x.BranchID == context.Message.BranchID && x.ProductID == context.Message.ProductID);
 						if (productBranch != null)
@@ -100,30 +100,18 @@ namespace InventoryService
 						productBranch = new ProductBranch() { BranchID = context.Message.BranchID, ProductID = context.Message.ProductID, SoftQuantity = context.Message.Quantity };
 						productBranches.Add(productBranch);
 
-						bus.Publish(new BranchStockUpdated() { BranchID = productBranch.BranchID, ProductID = productBranch.ProductID, Quantity = productBranch.SoftQuantity });
+						//bus.Publish(new BranchStockUpdated() { BranchID = productBranch.BranchID, ProductID = productBranch.ProductID, Quantity = productBranch.SoftQuantity });
 						return Task.CompletedTask;
-				});
+					});
 				});
 			});
 
-			bus.Start(); // This is important!
+			bus.Start(); 
 
 			Console.WriteLine("Press any key to exit");
 			Console.ReadKey();
 		}
     }
-
-	public interface IBranchStockCounted {
-		int BranchID { get; }
-		int ProductID { get; }
-		int Quantity { get; }
-	}
-
-	public interface IWarehouseStockCounted {
-		int WarehouseID { get; }
-		int ProductID { get; }
-		int Quantity { get; }
-	}
 
 	public class Warehouse {
 		public int ID { get; set; }
@@ -132,62 +120,14 @@ namespace InventoryService
 		public IList<ProductWarehouse> WarehouseStock { get; set; }
 	}
 
-	public interface IAllocationCreated {
-		int WarhouseID { get; }
-		int BranchID { get; }
-		int ProductID { get; }
-	}
-
-	public class WarehouseStockUpdated : IWarehouseStockUpdated {
-		public int WarehouseID { get; set; }
-
-		public int ProductID { get; set; }
-
-		public int Quantity { get; set; }
-	}
-
-	public interface IWarehouseStockUpdated {
-		int WarehouseID { get; }
-		int ProductID { get; }
-		int Quantity { get; }
-	}
-
-	public class BranchStockUpdated : IBranchStockUpdated {
-		public int BranchID { get; set; }
-		public int ProductID { get; set; }
-		public int Quantity { get; set; }
-	}
-
-
-
-	public interface IBranchStockUpdated {
-		int BranchID { get; }
-		int ProductID { get; }
-		int Quantity { get; }
-	}
-
-	public interface IWarehouseCreated {
-		int WarehouseID { get; }
-	}
-
 	public class Product {
 		public int ID { get; set; }
 		public string Barcode { get; set; }
 	}
 
-	public interface IProductCreated {
-		int ProductID { get; }
-	}
-
-
 	public class Branch {
 		public int ID { get; set; }
 		public int WarehouseID { get; set; }
-	}
-
-	public interface IBranchCreated {
-		int BranchID { get; }
-		int WarehouseID { get; }
 	}
 
 	public class ProductBranch {
@@ -202,5 +142,62 @@ namespace InventoryService
 		public int WarehouseID { get; set; }
 		public int SoftQuantity { get; set; }
 		public int HardQuantity { get; set; }
+	}
+
+	public class WarehouseStockUpdated : IWarehouseStockUpdated {
+		public int WarehouseID { get; set; }
+
+		public int ProductID { get; set; }
+
+		public int Quantity { get; set; }
+	}
+
+	public class BranchStockUpdated : IBranchStockUpdated {
+		public int BranchID { get; set; }
+		public int ProductID { get; set; }
+		public int Quantity { get; set; }
+	}
+
+	public interface IBranchStockCounted {
+		int BranchID { get; }
+		int ProductID { get; }
+		int Quantity { get; }
+	}
+
+	public interface IWarehouseStockCounted {
+		int WarehouseID { get; }
+		int ProductID { get; }
+		int Quantity { get; }
+	}
+
+	public interface IAllocationCreated {
+		int WarhouseID { get; }
+		int BranchID { get; }
+		int ProductID { get; }
+	}
+
+	public interface IWarehouseStockUpdated {
+		int WarehouseID { get; }
+		int ProductID { get; }
+		int Quantity { get; }
+	}
+
+	public interface IBranchStockUpdated {
+		int BranchID { get; }
+		int ProductID { get; }
+		int Quantity { get; }
+	}
+
+	public interface IWarehouseCreated {
+		int WarehouseID { get; }
+	}	
+
+	public interface IProductCreated {
+		int ProductID { get; }
+	}
+
+	public interface IBranchCreated {
+		int BranchID { get; }
+		int WarehouseID { get; }
 	}
 }
