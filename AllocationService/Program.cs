@@ -15,6 +15,7 @@ namespace AllocationService
 			var products = new List<Product>();
 			var warehouses = new List<Warehouse>();
 			var productWarehouses = new List<ProductWarehouse>();
+			var productBranches = new List<ProductBranch>();
 
 			// consume branches
 			var bus = Bus.Factory.CreateUsingRabbitMq(sbc => {
@@ -26,7 +27,7 @@ namespace AllocationService
 				sbc.ReceiveEndpoint(host, "AllocationService_IBranchCreated", ep => {
 					ep.Handler<IBranchCreated>(context => {
 						Console.WriteLine($"Received branch: {JsonConvert.SerializeObject(context.Message)}");
-						branches.Add(new Branch() { ID = context.Message.BranchID, WarehouseID = context.Message.WarehouseID });
+						branches.Add(new Branch() { ID = context.Message.BranchID, WarehouseID = context.Message.WarehouseID, BranchCodes = context.Message.BranchCodes });
 
 						return Task.CompletedTask;
 					});
@@ -35,7 +36,7 @@ namespace AllocationService
 				sbc.ReceiveEndpoint(host, "AllocationService_IProductCreated", ep => {
 					ep.Handler<IProductCreated>(context => {
 						Console.WriteLine($"Received product: {JsonConvert.SerializeObject(context.Message)}");
-						products.Add(new Product() { ID = context.Message.ProductID });
+						products.Add(new Product() { ID = context.Message.ProductID, ProductCodes = context.Message.ProductCodes });
 
 						return Task.CompletedTask;
 					});
@@ -58,11 +59,23 @@ namespace AllocationService
 						return Task.CompletedTask;
 					});
 				});
+
+				sbc.ReceiveEndpoint(host, "AllocationService_IBranchStockUpdated", ep => {
+					ep.Handler<IBranchStockUpdated>(context => {
+						Console.WriteLine($"Received branch stock: {JsonConvert.SerializeObject(context.Message)}");
+						productBranches.Add(new ProductBranch() { ProductID = context.Message.ProductID, BranchID = context.Message.BranchID, SoftQuantity = context.Message.Quantity });
+
+						return Task.CompletedTask;
+					});
+				});
 			});
 
 			bus.Start(); // This is important!
 
 			// Simulate receiving an allocation, here we would check that the Warehouse and Branch received were actually valid based on the created messages consumed.
+			
+			// Here we would have some logic which checks the product and branch groups, then sends out lines to single systems. 
+			// Also need to validate that the stock levels are valid for the pick
 			var allocationRecieved = new AllocationCreated() { WarhouseID = 1, BranchID = 1, ProductID = 1  };
 			var warehouseStock = productWarehouses.First(x => x.ProductID == allocationRecieved.ProductID && x.WarehouseID == allocationRecieved.WarhouseID);
 			
@@ -83,11 +96,13 @@ namespace AllocationService
 	public class Branch {
 		public int ID { get; set; }
 		public int WarehouseID { get; set; }
+		public IList<string> BranchCodes { get; set; }
 	}
 
 	public class Product {
 		public int ID { get; set; }
 		public string Barcode { get; set; }
+		public IList<string> ProductCodes { get; set; }
 	}
 
 	public class ProductWarehouse {
@@ -96,6 +111,14 @@ namespace AllocationService
 		public int SoftQuantity { get; set; }
 		public int HardQuantity { get; set; }
 	}
+
+	public class ProductBranch {
+		public int ProductID { get; set; }
+		public int BranchID { get; set; }
+		public int SoftQuantity { get; set; }
+		public int HardQuantity { get; set; }
+	}
+
 
 	public class AllocationCreated : IAllocationCreated {
 		public int WarhouseID { get; set; }
@@ -135,10 +158,12 @@ namespace AllocationService
 
 	public interface IProductCreated {
 		int ProductID { get; }
+		IList<string> ProductCodes { get; }
 	}
 
 	public interface IBranchCreated {
 		int BranchID { get; }
 		int WarehouseID { get; }
+		IList<string> BranchCodes { get; }
 	}
 }

@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27703.2035
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BranchService", "MicroService\BranchService.csproj", "{6F70847A-74D1-4BAF-810B-B99A34D391C0}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WarehouseAService", "WarehouseService\WarehouseAService.csproj", "{597C2C1D-D668-4ACF-96C8-304608C1C38B}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InventoryService", "InventoryService\InventoryService.csproj", "{A83E829F-B2C8-45AC-A7EF-268AB09CC07A}"
@@ -15,16 +13,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AllocationService", "Alloca
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WarehouseBService", "WarehouseBService\WarehouseBService.csproj", "{8463923B-3DF8-41BA-AC35-16FFE6A9BAD9}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BranchService", "BranchService\BranchService.csproj", "{B149D0C6-FEA6-4E32-B134-80306F3831AB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{6F70847A-74D1-4BAF-810B-B99A34D391C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6F70847A-74D1-4BAF-810B-B99A34D391C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6F70847A-74D1-4BAF-810B-B99A34D391C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6F70847A-74D1-4BAF-810B-B99A34D391C0}.Release|Any CPU.Build.0 = Release|Any CPU
 		{597C2C1D-D668-4ACF-96C8-304608C1C38B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{597C2C1D-D668-4ACF-96C8-304608C1C38B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{597C2C1D-D668-4ACF-96C8-304608C1C38B}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -45,6 +41,10 @@ Global
 		{8463923B-3DF8-41BA-AC35-16FFE6A9BAD9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8463923B-3DF8-41BA-AC35-16FFE6A9BAD9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8463923B-3DF8-41BA-AC35-16FFE6A9BAD9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B149D0C6-FEA6-4E32-B134-80306F3831AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B149D0C6-FEA6-4E32-B134-80306F3831AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B149D0C6-FEA6-4E32-B134-80306F3831AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B149D0C6-FEA6-4E32-B134-80306F3831AB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

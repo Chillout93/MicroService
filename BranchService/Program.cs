@@ -19,7 +19,7 @@ namespace MicroService
 			bus.Start(); 
 
 			foreach (var branch in branches) {
-				bus.Publish(new BranchCreated { BranchID = branch.ID, WarehouseID = branch.WarehouseID });
+				bus.Publish(new BranchCreated { BranchID = branch.ID, WarehouseID = branch.WarehouseID, BranchCodes = new List<string> { "MAIN", "HIGHWINTER" } });
 				bus.Publish(new BranchStockCounted() { BranchID = branch.ID, ProductID = 1, Quantity = 5 });
 			}
 		}
@@ -40,6 +40,7 @@ namespace MicroService
 	public interface IBranchCreated {
 		int BranchID { get; }
 		int WarehouseID { get; }
+		IList<string> BranchCodes { get; }
 	}
 
 	public class BranchStockCounted : IBranchStockCounted {
@@ -53,5 +54,6 @@ namespace MicroService
 	public class BranchCreated : IBranchCreated {
 		public int BranchID {get;set;}
 		public int WarehouseID { get; set; }
+		public IList<string> BranchCodes { get; set; }
 	}	
 }

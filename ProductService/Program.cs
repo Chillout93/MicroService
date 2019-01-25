@@ -20,7 +20,7 @@ namespace ProductService
 			bus.Start(); 
 
 			foreach (var product in products) {
-				bus.Publish(new ProductCreated { ProductID = product.ID });
+				bus.Publish(new ProductCreated { ProductID = product.ID, BranchCodes = new List<string> { "MAIN" } });
 			}
 
 		}
@@ -33,9 +33,11 @@ namespace ProductService
 
 	public class ProductCreated : IProductCreated {
 		public int ProductID { get; set; }
+		public IList<string> BranchCodes { get; set; }
 	}
 
 	public interface IProductCreated {
 		int ProductID { get; }
+		IList<string> BranchCodes { get; set; }
 	}
 }
